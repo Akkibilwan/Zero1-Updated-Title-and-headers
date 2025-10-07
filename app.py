@@ -70,6 +70,7 @@ def parse_json_from_response(text: str) -> list:
 
 def get_tone_prompt(srt_raw_text: str) -> str:
     """Builds the prompt for extracting tones from a transcript."""
+    # This prompt remains the same
     return f"""
 ROLE
 You are a YouTube Shorts tone extractor. Read an SRT, understand its meaning and audience, then output ONLY the tone names. Do NOT generate titles or any other fields.
@@ -127,6 +128,7 @@ config:
 
 def get_header_prompt(transcript_text: str, chosen_tone: str, header_count: int, custom_angle: str) -> str:
     """Builds the prompt for generating headers based on a chosen tone."""
+    # This prompt remains the same
     angle_block = ""
     if custom_angle and custom_angle.strip():
         angle_block = f"""
@@ -185,6 +187,7 @@ Respond ONLY with this section and nothing else. Generate EXACTLY {header_count}
 
 def get_title_prompt(transcript_text: str, chosen_tone: str, title_count: int) -> str:
     """Builds the prompt for generating titles based on a chosen tone."""
+    # This prompt remains the same
     return f"""
 ROLE AND GOAL:
 You are an expert viral content strategist based in Noida, specializing in writing high-engagement, "scroll-stopping" titles for YouTube Shorts. Your goal is to generate {title_count} powerful titles based on the provided video context and strategic parameters.
@@ -233,40 +236,35 @@ with st.sidebar:
         st.info("Create `.streamlit/secrets.toml` and add `GOOGLE_API_KEY = \"...\"`")
         st.stop()
 
-    # --- STATIC MODEL SELECTION (NEW) ---
+    # --- CORRECTED MODEL SELECTION (NEW) ---
     st.subheader("🤖 AI Model")
     
-    # Define the curated list of models
-    gemini_models = [
-        "Gemini 2.5 pro", 
-        "Gemini 2.5 flash", 
-        "gemini-pro-latest"
-    ]
+    # Create a mapping from user-friendly names to the required API model IDs
+    model_map = {
+        "Gemini 2.5 Pro": "gemini-2.5-pro", # Hypothetical ID, assuming standard naming
+        "Gemini 2.5 Flash": "gemini-2.5-flash", # Hypothetical ID
+        "Gemini Pro (Latest)": "gemini-pro" # 'gemini-pro' is the identifier for the latest stable version
+    }
     
-    # Set "Gemini 2.5 pro" as the default
-    default_index = 0 # The first item in the list is the default
+    # The options shown to the user are the keys of the dictionary
+    display_names = list(model_map.keys())
+    
+    # Set "Gemini 2.5 Pro" as the default
+    default_index = display_names.index("Gemini 2.5 Pro")
 
-    selected_model = st.selectbox(
+    # Let the user select the display name
+    selected_display_name = st.selectbox(
         "Choose AI Model",
-        gemini_models,
+        display_names,
         index=default_index,
         help="Select the AI model for content generation."
     )
     
-    # Map user-friendly names to actual model IDs if they differ
-    # For this example, we'll assume the names are the model IDs.
-    # If the actual ID for "Gemini 2.5 pro" was "gemini-2.5-pro-xyz", you would map it here.
-    model_id_map = {
-        "Gemini 2.5 pro": "gemini-2.5-pro", # Hypothetical mapping
-        "Gemini 2.5 flash": "gemini-2.5-flash", # Hypothetical mapping
-        "gemini-pro-latest": "gemini-pro"
-    }
-    # For now, let's assume the names match the required IDs for the API
-    # If you get model not found errors, you will need to use the correct API model ID.
-    actual_model_id = selected_model # Using the name directly
+    # Get the actual model ID from the map to use in the API call
+    actual_model_id = model_map[selected_display_name]
     
     model = genai.GenerativeModel(actual_model_id)
-    # --- END OF STATIC MODEL SELECTION ---
+    # --- END OF CORRECTED MODEL SELECTION ---
 
 
     st.markdown("---")
