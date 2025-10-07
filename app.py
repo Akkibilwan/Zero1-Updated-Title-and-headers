@@ -233,15 +233,47 @@ with st.sidebar:
         st.info("Create `.streamlit/secrets.toml` and add `GOOGLE_API_KEY = \"...\"`")
         st.stop()
 
-    # Model selection
-    gemini_models = ["gemini-1.5-flash-latest", "gemini-1.5-pro-latest"]
+    # --- DYNAMIC MODEL SELECTION (NEW) ---
+    st.subheader("🤖 AI Model")
+    try:
+        # Fetch all available models from the API
+        all_models = [
+            m.name.replace('models/', '') for m in genai.list_models()
+            if 'generateContent' in m.supported_generation_methods
+        ]
+        
+        # Filter for relevant Gemini models and sort them with latest versions first
+        gemini_models = sorted(
+            [m for m in all_models if 'gemini' in m and ('pro' in m or 'flash' in m)],
+            reverse=True
+        )
+
+        # If filtering results in an empty list, fall back to all available models
+        if not gemini_models:
+             st.warning("No specific Gemini Pro/Flash models found. Showing all available models.")
+             gemini_models = sorted(all_models, reverse=True)
+
+    except Exception as e:
+        st.error(f"Could not fetch AI models from API: {e}")
+        st.info("Falling back to default model names. These might be outdated.")
+        # Provide a forward-looking list as a fallback
+        gemini_models = ["gemini-2.5-flash-latest", "gemini-2.5-pro-latest", "gemini-1.5-pro-latest", "gemini-1.5-flash-latest"]
+
+    # Set a smart default, preferring the latest flash model for speed and cost
+    default_index = 0
+    flash_model_indices = [i for i, m in enumerate(gemini_models) if 'flash' in m]
+    if flash_model_indices:
+        default_index = flash_model_indices[0] # The first 'flash' model in the sorted list is the latest
+
     selected_model = st.selectbox(
         "Choose AI Model",
         gemini_models,
-        index=0,
-        help="`gemini-1.5-flash` is fast and cost-effective. `gemini-1.5-pro` is more powerful."
+        index=default_index,
+        help="Models are fetched live from the API. The newest models (like 2.5) will appear here automatically when available."
     )
     model = genai.GenerativeModel(selected_model)
+    # --- END OF DYNAMIC MODEL SELECTION ---
+
 
     st.markdown("---")
     st.subheader("🧪 Output Settings")
