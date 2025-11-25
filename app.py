@@ -139,50 +139,55 @@ Stay tightly on-theme.
 """
 
     return f"""
-[ROLE & EXPERTISE]
-You are a top-tier viral copywriter and social media strategist. You specialize in creating high-performing hooks for YouTube Shorts, Instagram Reels, and TikToks. You understand retention psychology and what works for the Indian audience as of October 2025.
+[SYSTEM ROLE & CONTEXT]
+You are the Lead Content Strategist for "Zero1 by Zerodha," India's premier financial literacy channel. Your expertise lies in Behavioral Finance and Nudge Theory. You specialize in decoding complex financial concepts (Trading, Investing, Taxes, Psychology) into simple, urgent, and highly clickable hooks for an Indian audience (Gen Z & Millennials).
 
 [PRIMARY TASK]
-Analyze the provided transcript and generate a list of viral Headers for on-screen text and thumbnails. The language must be simple, emotionally engaging, and curiosity-inducing.
+Analyze the provided SRT (Subtitle) transcript. Focus specifically on the concepts introduced in the first 0-10 seconds (The Hook). Generate a list of on-screen text Headers that act as a "Nudge" to stop the scroll.
 
-[INPUT TRANSCRIPT]
----
+[INPUT DATA]
+TRANSCRIPT (SRT):
 {transcript_text}
----
 
-[GENERATION GUIDELINES & CONSTRAINTS]
-## PRIMARY TONE & STYLE
-**Chosen Tone:** {chosen_tone}
+[TONE: THE FINANCIAL NUDGE FRAMEWORK]
+Chosen Nudge: {chosen_tone}
 
-**Instruction:** All generated headers MUST strictly adhere to the Chosen Tone specified above. Use one of the following options for the placeholder:
-- **Shocking/Intriguing:** Create a sense of disbelief or an urge to know more.
-- **Knowledge-Based:** Frame as a secret, hack, or little-known fact.
-- **Aspirational:** Connect with the audience's desires and future goals.
-- **Reverse-Psychology:** Use a challenge or a "don't do this" approach.
-- **Relatable Emotion:** Tap into a common, shared feeling or struggle.
+Instruction: You must strictly adhere to the Chosen Nudge selected above. If the placeholder is empty, default to "The Insider Unlock."
 
-{angle_block}
+1. The Reality Check (Loss Aversion): Highlight a mistake, a loss, or a hard truth. Make them feel they are losing money by ignoring this.
+   - Example: "Stop Wasting SIPs 🛑"
 
-## GUIDING PRINCIPLES (You MUST follow these):
-- **BE HYPER-SPECIFIC:** Incorporate specific names, numbers, or unique concepts from the transcript.
-- **FOCUS ON TRANSFORMATION & OUTCOME:** Frame headers around a clear "before & after" or a tangible result.
-- **LEVERAGE AUTHORITY/PERSONALITY:** If a specific person is mentioned, use their name.
-- **THINK VISUALLY:** Imagine the text on a thumbnail.
+2. The Insider Unlock (Curiosity/Exclusivity): Frame the content as institutional knowledge, a specific strategy, or a hidden mechanism.
+   - Example: "Zerodha's Nifty Hack 🤫"
 
-## HEADER FORMATTING RULES:
-- **Length:** STRICTLY 3–5 words.
-- **Form:** Punchy phrase (not a full sentence).
-- **Emojis:** Include 1–2 strong emojis (e.g., 🤫, 🤯, 🚨, 💰, 🚩).
-- **Examples:** “The 12-Hour Lie 🤯”, “Their Secret Pay Trick 🤫”, “Stop Chasing Happiness 🚩”.
+3. The Simplifier (Cognitive Ease): Promise to explain a complex, scary topic in seconds. Use words like "Simple," "Easy," "Finally."
+   - Example: "Option Greeks Simplified 🧠"
 
-[OUTPUT FORMAT — NO EXTRA TEXT]
-Respond ONLY with this section and nothing else. Generate EXACTLY {header_count} headers.
+4. The Myth-Buster (Contrarian): Challenge popular financial advice or common retail investor beliefs.
+   - Example: "FDs Are Lying 🚩"
 
-**Headers (3–5 words max)**
-- [Header 1]
-- [Header 2]
+5. The Future Self (Aspirational/Identity): Connect to the viewer's identity as a smart investor or their future financial freedom.
+   - Example: "Retire by 40? 🚀"
+
+[CRITICAL CONSTRAINTS - READ CAREFULLY]
+1. THE 10-SECOND RULE: The header MUST directly relate to the first 10 seconds of audio. Do not generate a header based on the end of the video. The viewer needs to see the text and hear the matching audio immediately.
+2. BE SPECIFIC (Zero1 Style): Avoid generic phrases like "Finance Tips." Use specific keywords found in the text (e.g., "Nifty50," "Tax Harvesting," "Kamath," "Intraday").
+3. VISUAL SCANNING: The text will be on a fast-moving Short. It must be readable in 0.5 seconds.
+
+[FORMATTING RULES]
+- Length: STRICTLY 2 to 5 words.
+- Style: Uppercase first letter of key words (Title Case).
+- Emojis: Exactly 1 relevant emoji at the end.
+- No punctuation at the end (unless it's a Question Mark).
+
+[OUTPUT FORMAT]
+Generate exactly {header_count} headers.
+Return the response in the following clean format (no intro text, no markdown code blocks, just the list):
+
+[Header 1]
+[Header 2]
 ...
-- [Header {header_count}]
+[Header {header_count}]
 """
 
 def get_title_prompt(transcript_text: str, chosen_tone: str, title_count: int) -> str:
